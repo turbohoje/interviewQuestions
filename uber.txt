@@ -1,0 +1,23 @@
+write something that does the same thing as grep
+ - open a file, print line number : match.  add highlight
+ - some perl, splits, regexes
+
+why is grep so much faster?
+ - no regex
+ - searches strings backwards, jumps ahead needle's width and compares that character and closes in.
+ 
+whats the diff (mispellings galore below)
+find . -exec grep
+
+find . | xargs grep
+
+find . -pritn0 | xargs -P8 grep
+
+git use
+ - how to make a pretty master branch
+   . rebase (why)
+   . squash on merge (why)
+   
+ - when is it appropriate to have a big merge
+  . told story about chaining on tickets to merges when you find bugs
+  
