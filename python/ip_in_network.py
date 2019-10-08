@@ -10,7 +10,7 @@ local_networks = [
     "10.0.0.0/8",
     "172.16.0.0/12",
     "192.168.0.0/16",
-    "207.224.48.248/24"
+#    "207.224.48.248/24",
 ]
 
 def check_in_networks(ip, networks):
@@ -18,19 +18,22 @@ def check_in_networks(ip, networks):
     (a,b,c,d) = tuple(map(int, re.match(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$', ip).groups()))
     test_ip_number = (a << 24) + (b<<16) + (c<<8) + (d)
 
-    #print("one:{0:08b}.{1:08b}.{2:08b}.{3:08b}".format(a,b,c,d))
-    #print("two:{0:032b}".format(test_ip_number))
-
     for net in networks:
         (na,nb,nc,nd,sn) = tuple(map(int, re.match(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\/(\d+)$', net).groups()))
         network_ip_number = (na << 24) + (nb<<16) + (nc<<8) + (nd)
         # start at msb and work backward until i'm out of bits i care about
         net_mask_sum = 0;
         ip_mask_sum  = 0;
-        for bit in range(32,32-sn,-1):
-            my_bit = ( 1<< (32-sn))
-            net_mask_sum += my_bit % network_ip_number
-            ip_mask_sum += my_bit % test_ip_number
+        for bit in range(31,31-sn,-1):
+            my_bit = ( 1 << (bit))
+            net_mask_sum += my_bit & network_ip_number
+            ip_mask_sum  += my_bit & test_ip_number
+
+
+        # print("testIp:{0:08b}.{1:08b}.{2:08b}.{3:08b}".format(a,b,c,d))
+        # print("netIp :{0:08b}.{1:08b}.{2:08b}.{3:08b}".format(na,nb,nc,nd))
+        # print("sumTest:{0:032b}".format(ip_mask_sum))
+        # print("numNetw:{0:032b}".format(net_mask_sum))
 
         if net_mask_sum == ip_mask_sum:
             return True
