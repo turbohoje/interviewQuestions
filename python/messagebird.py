@@ -16,10 +16,8 @@ characters wil have the same weight, this is the lexicographically smallest of t
 """
 
 chars = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
-
-weights = [1]
-
 #popuate wights
+weights = [1]
 for x in range(1, 26):
     weights.append( (weights[x-1] * (x+1)) + weights[x-1] )
 
@@ -30,11 +28,11 @@ def get_fact(weight):
     while(currWeight > 0):
         for w in range(len(weights)-1, -1, -1):
             if(weights[w] <= currWeight):
-                currWeight = currWeight - weights[w]
+                currWeight = currWeight - weights[w]  #this could be optimized with some modulo and not seeking all the way from len(weights)
                 rtot += chars[w]
 
                 break
 
     return rtot[::-1]
 
-print(get_fact(60))
+print(get_fact(11))

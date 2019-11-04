@@ -45,6 +45,8 @@ tree.right.value="b"
 tree.printree()
 
 
+#unifinished, short answer left =  reverse(right) right = reverse(left) however this leaves things unbalanced.
+
 """
         U
        /         \
