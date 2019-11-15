@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-
+# totally incomplete, just messing about
 
 class Node:
     left = None

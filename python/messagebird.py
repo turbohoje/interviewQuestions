@@ -36,3 +36,5 @@ def get_fact(weight):
     return rtot[::-1]
 
 print(get_fact(11))
+
+
