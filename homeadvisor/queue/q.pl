@@ -12,12 +12,13 @@ sub cacheContents {
     @$clptr = sort { $a->[0] <=> $b->[0] } @$clptr;
 
     my %mem;
+    my %cache;
 
     my $timeVal = 0;
     sub p_state{
-        print "STATE[$timeVal]: ";
+        print "STATE<$timeVal>: ";
         foreach my $i (sort(keys(%mem))){
-            print "[$i]($mem{$i}), ";
+            print "[$i]($mem{$i}), " if ($mem{$i});
         }
         print "\n";
     }
@@ -36,7 +37,8 @@ sub cacheContents {
             $vals{$_} ++;
         }
         foreach(keys(%vals)){
-                $vals{$_} = $vals{$_} * 2;
+            $vals{$_} = $vals{$_} * 2;
+#            print "i$vals{$_} ";
         }
         return %vals;
     }
@@ -49,18 +51,27 @@ sub cacheContents {
         my %incr = incr($addrs);
         foreach(keys(%incr)){
             $mem{$_} += $incr{$_};
+            #add to cache on increment
+            if($mem{$_} > 5){
+                $cache{$_} = 1;
+            }
         }
         @$addrs = (); #empty array
 
+
         foreach my $i (sort keys(%mem)){
-            if($size > 0 && grep {$_ ne $i} keys(%incr)){
+            if(!grep {$_ eq $i} keys(%incr)){
+#                print "d$i ";
                 $mem{$i} = decr($mem{$i});
+
+                #remove from cache
+                if($mem{$i} <= 3){
+                    $cache{$i} = 0;
+                }
             }
-            elsif($size==0){
-                $mem{$i} = decr($mem{$i});
-            }
+
         }
-        p_state();
+        #p_state();
     }
 
     #build the state
@@ -69,7 +80,7 @@ sub cacheContents {
     foreach(@$clptr){
         my ($timestamp, $item_id) = ($_->[0], $_->[1]);
         #######
-        $timeVal = $timestamp;
+        $timeVal ++;
 #        print "DATA ROW Time: $timestamp, Item: $item_id - $#accesses\n";
 
         if($last_timestamp == $timestamp){
@@ -77,20 +88,21 @@ sub cacheContents {
             next;
         }
 
-        while($last_timestamp < $timestamp){
-#            print "\tcatchup: LT: $last_timestamp  T: $timestamp \n";
+        while($last_timestamp < $timestamp){ #time wo access
+#            print "catchup: LT: $last_timestamp  T: $timestamp \n";
             clock_cycle(\@accesses);
             $last_timestamp += 1;
         }
 
         push(@accesses, $item_id);
     }
+#    print "last\n";
     clock_cycle(\@accesses);
 
-    #return formatting
+    #return formatting items in cache
     my @retval = ();
-    foreach my $i (sort keys(%mem)){
-        if($mem{$i} >= 4){
+    foreach my $i (sort keys(%cache)){
+        if($cache{$i} > 0){
             push(@retval, $i);
         }
     }
@@ -130,5 +142,5 @@ __DATA__
 2 1
 2 1
 4 2
-6 2
 5 2
+6 2
