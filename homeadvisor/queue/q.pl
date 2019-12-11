@@ -2,7 +2,7 @@
 #use Data::Dumper;
 
 use strict;
-
+use diagnostics;
 
 
 #determine what is in the cache from a state machine
@@ -11,10 +11,9 @@ sub cacheContents {
     # logs are "not necessarily" in order, sort by [0] in place bec i later depend on order.
     @$clptr = sort { $a->[0] <=> $b->[0] } @$clptr;
 
-    my %mem;
-    my %cache;
-
-    my $timeVal = 0;
+    our %mem;
+    our %cache;
+    our $timeVal = 0;
     sub p_state{
         print "STATE<$timeVal>: ";
         foreach my $i (sort(keys(%mem))){
@@ -45,6 +44,8 @@ sub cacheContents {
 
     #decrement appropriately, addr is an array of who not to decrement
     sub clock_cycle{
+        our %mem;
+        our %cache;
         my $addrs =  shift;
         my $size = scalar @$addrs;
 
@@ -63,7 +64,6 @@ sub cacheContents {
             if(!grep {$_ eq $i} keys(%incr)){
 #                print "d$i ";
                 $mem{$i} = decr($mem{$i});
-
                 #remove from cache
                 if($mem{$i} <= 3){
                     $cache{$i} = 0;
@@ -71,7 +71,7 @@ sub cacheContents {
             }
 
         }
-        #p_state();
+#        p_state(); #key for debugging state
     }
 
     #build the state
@@ -100,9 +100,10 @@ sub cacheContents {
     clock_cycle(\@accesses);
 
     #return formatting items in cache
-    my @retval = ();
+    my @retval;
     foreach my $i (sort keys(%cache)){
         if($cache{$i} > 0){
+
             push(@retval, $i);
         }
     }
@@ -136,9 +137,10 @@ sub rtrim {
 }
 
 __DATA__
-6
+7
 2
 1 1
+2 1
 2 1
 2 1
 4 2
