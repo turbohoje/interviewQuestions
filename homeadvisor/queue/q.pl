@@ -13,27 +13,30 @@ sub cacheContents {
 
     my %mem;
 
+    my $timeVal = 0;
+    sub p_state{
+        print "STATE[$timeVal]: ";
+        foreach my $i (sort(keys(%mem))){
+            print "[$i]($mem{$i}), ";
+        }
+        print "\n";
+    }
+
     #incr/decr function for possible later expansion or mods
-    sub decr{ # value
+    sub decr{ # expects only a value
         my $val = shift;
         $val -= 1;
         if( $val < 0 ){ return 0; }
         return $val;
     }
-    sub incr{ #array, returns a hash of all values to enc
+    sub incr{ #expects array, returns a hash of all values to enc
         my $addrs = shift;
         my %vals;
-#        print "incr vals: ";
         foreach(@$addrs){
             $vals{$_} ++;
-#            print $_;
         }
-#        print "\n";
         foreach(keys(%vals)){
-            #if($vals{$_} > 1){
                 $vals{$_} = $vals{$_} * 2;
-            #}
-
         }
         return %vals;
     }
@@ -57,6 +60,7 @@ sub cacheContents {
                 $mem{$i} = decr($mem{$i});
             }
         }
+        p_state();
     }
 
     #build the state
@@ -64,6 +68,8 @@ sub cacheContents {
     my @accesses = ();
     foreach(@$clptr){
         my ($timestamp, $item_id) = ($_->[0], $_->[1]);
+        #######
+        $timeVal = $timestamp;
 #        print "DATA ROW Time: $timestamp, Item: $item_id - $#accesses\n";
 
         if($last_timestamp == $timestamp){
