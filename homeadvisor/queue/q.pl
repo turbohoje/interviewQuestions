@@ -41,35 +41,22 @@ sub cacheContents {
     #decrement appropriately, addr is an array of who not to decrement
     sub clock_cycle{
         my $addrs =  shift;
-#        foreach(@$addrs){
-#            print $_;
-#        }
         my $size = scalar @$addrs;
 
         my %incr = incr($addrs);
         foreach(keys(%incr)){
-#            print "INCR $_ = $incr{$_}\n";
             $mem{$_} += $incr{$_};
         }
-#        print "Clock Cycle: $size\n";
         @$addrs = (); #empty array
 
         foreach my $i (sort keys(%mem)){
-#            print "LOUPE $i($size) ";
             if($size > 0 && grep {$_ ne $i} keys(%incr)){
-#                print "\t\t\t\tdecr $i($size)";
                 $mem{$i} = decr($mem{$i});
             }
             elsif($size==0){
-#                print "\t\t\t\tDECR $i($size)";
                 $mem{$i} = decr($mem{$i});
             }
         }
-
-#        foreach my $i (sort keys(%mem)){
-#            print "\t\t\tSTATE: $i $mem{$i}\t";
-#        }
-
     }
 
     #build the state
@@ -91,25 +78,8 @@ sub cacheContents {
         }
 
         push(@accesses, $item_id);
-
-#        foreach my $i (sort keys(%mem)){
-#            print "\t\t\tSTATE: $i $mem{$i}\t";
-#        }
-#        foreach my $i (@accesses){
-#            print " $i\t";
-#        }
-#        print "\n";
     }
     clock_cycle(\@accesses);
-
-#    print "\n";
-#    foreach my $i (sort keys(%mem)){
-#        print "\t\t\tfSTATE: $i $mem{$i}\t";
-#    }
-#    foreach my $i (@accesses){
-#        print " $i\t";
-#    }
-#    print "\n";
 
     #return formatting
     my @retval = ();
