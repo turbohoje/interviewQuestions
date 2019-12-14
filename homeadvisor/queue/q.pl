@@ -4,7 +4,7 @@
 use strict;
 use diagnostics;
 
-
+#Unfortunately I don’t have any more time to spend on this, and tests 5,6,8,9,12,14 are still failing.  I would still love an opportunity to discuss it.
 #determine what is in the cache from a state machine
 sub cacheContents {
     my $clptr = shift;
@@ -14,7 +14,7 @@ sub cacheContents {
     our %mem;
     our %cache;
     our $timeVal = 0;
-    sub p_state{
+    sub p_state{  #debug func
         print "STATE<$timeVal>: ";
         foreach my $i (sort(keys(%mem))){
             print "[$i]($mem{$i}), " if ($mem{$i});
@@ -37,7 +37,6 @@ sub cacheContents {
         }
         foreach(keys(%vals)){
             $vals{$_} = $vals{$_} * 2;
-#            print "i$vals{$_} ";
         }
         return %vals;
     }
@@ -57,12 +56,9 @@ sub cacheContents {
                 $cache{$_} = 1;
             }
         }
-        @$addrs = (); #empty array
-
-
+        @$addrs = ();
         foreach my $i (sort keys(%mem)){
             if(!grep {$_ eq $i} keys(%incr)){
-#                print "d$i ";
                 $mem{$i} = decr($mem{$i});
                 #remove from cache
                 if($mem{$i} <= 3){
@@ -79,9 +75,7 @@ sub cacheContents {
     my @accesses = ();
     foreach(@$clptr){
         my ($timestamp, $item_id) = ($_->[0], $_->[1]);
-        #######
-        $timeVal ++;
-#        print "DATA ROW Time: $timestamp, Item: $item_id - $#accesses\n";
+        $timeVal ++; #just for output
 
         if($last_timestamp == $timestamp){
             push(@accesses, $item_id);
@@ -89,14 +83,12 @@ sub cacheContents {
         }
 
         while($last_timestamp < $timestamp){ #time wo access
-#            print "catchup: LT: $last_timestamp  T: $timestamp \n";
             clock_cycle(\@accesses);
             $last_timestamp += 1;
         }
 
         push(@accesses, $item_id);
     }
-#    print "last\n";
     clock_cycle(\@accesses);
 
     #return formatting items in cache
